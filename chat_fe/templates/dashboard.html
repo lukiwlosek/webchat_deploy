@@ -1,0 +1,60 @@
+{%  load static %}
+{% block head %}
+<title>Dashboard</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+<link rel='stylesheet' href="{% static 'style2.css'%}">
+
+{% endblock %}
+{% block body %}
+<div class="wrapper ">
+  <div id="formContent">
+    <div>
+        <div class="row">
+            <div class="col-8">
+                <h1>Friends</h1>
+            </div>
+            <div class="col-4">
+                <a href="https://connect.stripe.com/express/oauth/authorize?redirect_uri=http://localhost:8000/chat/&client_id=ca_HeSw6A4EHicKxYMsfVlBIevwEreCQMZj&state={STATE_VALUE}">
+                    <button type="button" class="button btn btn-primary" id="dash">Connect with stripe</button>
+                </a>
+            </div>
+        </div>
+        </br>
+        {% for friend in friends %}
+        </br>
+        <div class="row  d-flex justify-content-center">
+
+            <h4>{{ friend.other_user.client.username }} </h4>
+            <a href="{% url 'room' room_name=friend.room %}">
+                <button type="button" class="btn btn-info"> Chat </button>
+            </a>
+            <a href="{% url 'change_friends' operation='remove' pk=friend.other_user.client.pk %}">
+                <button type="button" class="btn btn-secondary"> Remove </button>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <div><h2>People you might know</h2>
+        {% for user in users %}
+        </br>
+            {% if not user in friends %}
+            <span class=" row d-flex justify-content-center">
+                <h4>{{user.username}}</h4>
+                <a href="{% url 'change_friends' operation='add' pk=user.pk %}">
+                    <button type="button" class="btn btn-info">Add</button> 
+                </a>
+            </span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    </br>
+    <div id="formFooter">
+        <a href="{% url 'logout' %}">
+            <button type="button" class="button btn btn-primary"> Logout</button>
+        </a>
+    </div>
+    </br>
+    </div>
+    </div>
+{%endblock%}

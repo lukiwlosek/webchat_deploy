@@ -1,0 +1,127 @@
+{%  load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chat ajax</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<link rel='stylesheet' href="{% static 'style.css'%}">
+</head>
+<body>
+	<div class="container">
+		<h1> Just chattin </h1>
+		<h3 id="name"> User:  </h3>
+		<div class="chat-container" class="col-12">
+			<div class="sending">
+				<form id="form" class="row">
+					<div class="col-8">
+						<h2 id="otherUser"> Chatting with: {{friend_name}}</h2>
+					</div>
+					<div class="col-2">
+						<a href="{% url 'dashboard'%}">
+							<button type="button" class="btn btn-info" id="dash">Dashboard</button>
+						</a>
+					</div>
+					{% if connected == "no"%}
+					<div class="col-2">
+							<button type="button" class="btn btn-info" onclick="alert('Other user is not connected to stripe')" id="dash">Payment</button>
+					</div>
+					{%else%}
+					<div class="col-2">
+						<a href="{% url 'index'  user=friend_name room=room_name %}">
+							<button type="button" class="btn btn-success" id="dash">Payment</button>
+						</a>
+					</div>
+					{%endif%}
+				</form>
+			</div>
+			<div id="chatting" class="col-12">
+				
+			</div>
+			<div class="sending">
+				
+				<form id="form" class="row">
+					<div class="col-10">
+						<input id="input" class="form-control" type="text" placeholder=" Write a message">
+					</div>
+					<div class="col-2">
+						<button type="button" class="button btn btn-primary" id="Btn" onclick="clickFunction();">Send</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+	{{ room_name|json_script:"room-name" }}
+	<script type="text/javascript">
+	// reset function
+	var user = {{ text }};
+	document.getElementById("name").innerHTML += user
+	
+	const roomName = JSON.parse(document.getElementById('room-name').textContent);
+    
+	const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/chat/'
+        + roomName
+        + '/'
+    );
+	// onmessage, onopen, onerror, onclose 
+    chatSocket.onopen = function(e){
+    	console.log("connection established");
+    	//function which calls the api for my data on messages sent in this web chat, for real we did that already in another app but im doing it on my own now !
+    	fetchData()
+    }
+    function fetchData(){
+    	chatSocket.send(JSON.stringify({'command':'fetch_messages',
+		'room':roomName}));
+    }
+    chatSocket.onmessage = function(e){
+			var data = JSON.parse(e.data)
+			
+			//will change once new message is in place 
+			if(data['command']=== "messages"){
+				for(let i = data['messages'].length - 1; i >= 0 ; i--){
+					makeMessages(data['messages'][i])
+				}
+		}
+		else if(data['command'] === "new_message"){
+			makeMessages(data['message'])
+		}
+    }
+	//function which creates new messages 
+	function makeMessages(data){
+		var chat = document.getElementById("chatting")
+		var user = data['user']
+		var message = data['messenger']
+		var div =
+			`<div class="row">
+				<h3> User: ${user} M:${message} </h3>
+
+			</div>`
+
+		chat.innerHTML += div 
+	}
+	//document.getElementById("Btn").addEventListener("click", clickFunction);
+
+	function clickFunction(){
+		var message = document.getElementById("input").value;
+		var obj={
+			'command':'new_message',
+			'message':message,
+			'from':user,
+			'room':roomName
+		}
+		chatSocket.send(JSON.stringify(obj));
+		document.getElementById("input").value = '';
+		
+	}
+
+	
+
+
+
+	</script>
+
+</body>
+</html>

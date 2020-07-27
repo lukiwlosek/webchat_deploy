@@ -1,0 +1,23 @@
+{%  load static %}
+{% block head %}
+  <title>Logout</title>
+  <link rel='stylesheet' href="{% static 'style2.css'%}">
+{% endblock %}
+
+{% block body %}
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+   
+    <h3> You have succesfully logged out! </h3>
+    <!-- Remind Passowrd -->
+    <div id="formFooter">
+      <a class="underlineHover" href="{% url 'login' %}">Log in again</a>
+      <br/>
+      <a class="underlineHover" href="{%url 'register'%}" > Register </a>
+    </div>
+
+  </div>
+</div>
+</div>
+
+{% endblock %}w
