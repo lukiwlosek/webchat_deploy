@@ -27,7 +27,7 @@ lxml==4.5.2
 Markdown==3.2.2
 msgpack==0.6.2
 pycparser==2.20
-Pygments==2.6.1
+Pygments==2.7.4
 PyHamcrest==2.0.2
 pyquery==1.4.1
 pytz==2020.1
