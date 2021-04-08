@@ -14,7 +14,7 @@ cryptography==3.0
 cssselect==1.1.0
 d==0.2.2
 daphne==2.5.0
-Django==3.0.8
+Django==3.0.14
 django-cors-headers==3.4.0
 django-six==1.0.4
 djangorestframework==3.11.0
